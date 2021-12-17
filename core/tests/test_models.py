@@ -25,6 +25,14 @@ class ModelTests(TestCase):
         password=1234
         user=get_user_model().objects.create_user(email=email, password=password)
         self.assertEqual(user.email, email.lower())
+
+
+    def test_email_validity(self):
+        '''check for email validation'''
+
+        with self.assertRaises(ValueError):
+            get_user_model().objects.create_user(None,"1234")
+
     
 
     
