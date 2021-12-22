@@ -8,4 +8,6 @@ urlpatterns = [
 
     path('token/', views.CreateTokenView.as_view(),name='token'),
 
+    path('myprofile/',views.ManageUserView.as_view(),name='myprofile')
+
 ]

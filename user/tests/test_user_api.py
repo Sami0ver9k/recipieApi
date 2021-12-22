@@ -1,3 +1,4 @@
+from _typeshed import Self
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -7,6 +8,7 @@ from rest_framework import status
 
 CREATE_USER_URL=reverse('user:create')
 TOKEN_URL= reverse('user:token')
+ME_URL=reverse('user:me')
 
 def create_user(**params):
     return get_user_model().objects.create_user(**params)
@@ -67,4 +69,32 @@ class PublicApiTest(TestCase):
         self.assertNotIn('token',res.data)
         self.assertEqual(res.status_code,status.HTTP_400_BAD_REQUEST)
 
+class PrivateUserApiTest(TestCase):
+    '''test api for users that require auth'''
+
+    def setUp(self) -> None:
+        self.user= create_user(
+            email='test@ilc.com',
+            password='1234',
+            name='name'
+        )
+        self.client=APIClient()
+        self.client.force_authenticate(user=self.user)
+
+    def test_retrieve_success(self):
+        res=self.client.get(ME_URL)
+        self.assertEqual(res.status_code,status.HTTP_200_OK)
+
+
+    def test_update_users(self):
+
+        '''tets for updating users '''
+
+        payload={'name':'newName','password':'1234'}
+
+        res=self.client.patch(ME_URL,payload)
+
+        self.user.Refresh_from_db()
+        self.assertEqual(self.user.name,payload['name'])
+        self.assertEqual(res.status_code,status.HTTP_200_OK)
 
