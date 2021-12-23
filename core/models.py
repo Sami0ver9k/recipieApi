@@ -1,7 +1,9 @@
 from typing import ClassVar
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager,PermissionsMixin
-
+from django.db.models.base import Model
+from django.conf import settings
+from django.forms.fields import CharField
 
 class UserManager(BaseUserManager):
     """new custom user model manager"""
@@ -41,6 +43,19 @@ class User(AbstractBaseUser,PermissionsMixin):
     objects=UserManager()
 
     USERNAME_FIELD = 'email'
+
+
+
+class Tag(models.Model):
+    name= models.CharField(max_length=256)
+    user=models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+
+    def __str__(self) -> str:
+        return self.name
+
 
 
 
